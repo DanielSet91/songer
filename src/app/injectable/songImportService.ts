@@ -9,11 +9,17 @@ import { Song, SongInput } from "app/types/commonTypes";
 export class SongImportService implements OnApplicationBootstrap {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * Runs automatically when the application starts.
+   * Looks for a CSV file named "song_list*.csv" inside the /rawData folder
+   * and imports its content into the database.
+   */
   async onApplicationBootstrap() {
     const folderPath = path.join(__dirname, "..", "rawData");
 
     const files = fs.readdirSync(folderPath);
 
+    // Try to find the song_list CSV file (case-insensitive).
     const songFile = files.find(
       (file) =>
         file.toLowerCase().includes("song_list") &&
@@ -29,6 +35,12 @@ export class SongImportService implements OnApplicationBootstrap {
     }
   }
 
+  /**
+   * Reads a CSV file containing songs and inserts them into the database.
+   * - Expects CSV headers: "Song Name;Band;Year"
+   * - Transforms them into lowercase before saving.
+   * - Skips duplicates automatically (handled by Prisma).
+   */
   private async importSongs(filePath: string) {
     return new Promise<void>((resolve, reject) => {
       const songs: Song[] = [];

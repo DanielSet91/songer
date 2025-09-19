@@ -1,0 +1,7 @@
+{
+  "watch": ["src"],
+  "ignore": ["node_modules", "dist"],
+  "ext": "ts",
+  "legacyWatch": true,
+  "exec": "npm run build && node --inspect=0.0.0.0 dist/src/executions/server"
+}
